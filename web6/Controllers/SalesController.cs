@@ -23,6 +23,8 @@ namespace web6.Controllers {
             // フィルタ
             if (!string.IsNullOrEmpty(searchName))
                 query = query.Where(x => x.Name.Contains(searchName));
+            if (!string.IsNullOrEmpty(searchDateInput) && DateTime.TryParse(searchDateInput, out var searchDate))
+                query = query.Where(x => x.Date.Date == searchDate.Date);
             if (minPrice.HasValue)
                 query = query.Where(x => x.Price >= minPrice.Value);
             if (maxPrice.HasValue)
@@ -56,6 +58,13 @@ namespace web6.Controllers {
                 TotalItems = total
             };
             return View("Index", vm);
+        }
+
+        [HttpGet]
+        public IActionResult TourList() {
+            // ツアー一覧を取得
+            var tours = _db.BuildTourQuery().ToList();
+            return View(tours);
         }
     }
 }
