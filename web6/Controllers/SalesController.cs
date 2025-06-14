@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using web6.Data;
 using web6.Models;
+using X.PagedList.Mvc;
+using X.PagedList;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace web6.Controllers {
     public class SalesController : Controller {
@@ -61,10 +64,10 @@ namespace web6.Controllers {
         }
 
         [HttpGet]
-        public IActionResult TourList() {
-            // ツアー一覧を取得
-            var tours = _db.BuildTourQuery().ToList();
-            return View(tours);
+        public IActionResult TourList(int page = 1, int pageSize = 10) {
+            var query = _db.BuildTourQuery().OrderBy(t => t.ID);
+            IPagedList<TourViewModel> pagedTours = query.ToPagedList(page, pageSize);
+            return View(pagedTours);
         }
     }
 }

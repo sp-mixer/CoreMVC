@@ -1,1 +1,45 @@
-﻿
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@model IPagedList<web6.Models.TourViewModel>
+
+<h2>ツアー一覧</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ツアー名</th>
+            <th>日付</th>
+            <th>価格</th>
+            <th>日数</th>
+            <th>在庫</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tour in Model)
+        {
+            <tr>
+                <td>@tour.Name</td>
+                <td>@tour.Date.ToShortDateString()</td>
+                <td>@tour.Price</td>
+                <td>@tour.Days</td>
+                <td>@tour.Stock</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- ページネーション -->
+<nav aria-label="ページナビゲーション">
+    @Html.PagedListPager(Model, page => Url.Action("TourList", new { page }),
+        new PagedListRenderOptions
+        {
+            Display = PagedListDisplayMode.IfNeeded,
+            MaximumPageNumbersToDisplay = 7,
+            UlElementClasses = new[] { "pagination", "justify-content-left" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" },
+
+            LinkToPreviousPageFormat = "Previous",
+            LinkToNextPageFormat = "Next",
+        })
+</nav>
