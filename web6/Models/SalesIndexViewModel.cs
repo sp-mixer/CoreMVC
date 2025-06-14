@@ -1,4 +1,6 @@
-﻿namespace web6.Models {
+﻿using X.PagedList;
+
+namespace web6.Models {
 
     public class TourViewModel{
         public string ID { get; set; } = string.Empty;
@@ -54,4 +56,32 @@
         public int TotalItems {get; set;}
         public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
     }
+    public class TourListViewModel {
+        // 検索条件
+        public string? SearchName {
+            get; set;
+        }
+        public string? SearchDate {
+            get; set;
+        }
+
+        // ソート条件
+        public string? SortColumn {
+            get; set;
+        }
+        public string? SortDirection {
+            get; set;
+        }
+
+        // ページング
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+
+        // 結果リスト（PagedList）
+        public IPagedList<TourViewModel> Tours {
+            get; set;
+        }
+    }
+
+
 }

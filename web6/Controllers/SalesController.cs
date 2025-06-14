@@ -64,10 +64,60 @@ namespace web6.Controllers {
         }
 
         [HttpGet]
-        public IActionResult TourList(int page = 1, int pageSize = 10) {
-            var query = _db.BuildTourQuery().OrderBy(t => t.ID);
-            IPagedList<TourViewModel> pagedTours = query.ToPagedList(page, pageSize);
-            return View(pagedTours);
+        public IActionResult TourList(string? searchName, string? searchDate, string? sortColumn, string? sortDirection,
+                                        int page = 1, int pageSize = 10) {
+            var query = _db.BuildTourQuery();
+
+            // 検索
+            if (!string.IsNullOrEmpty(searchName))
+                query = query.Where(t => t.Name.Contains(searchName));
+
+            if (!string.IsNullOrEmpty(searchDate) && DateTime.TryParse(searchDate, out var date))
+                query = query.Where(t => t.Date.Date == date.Date);
+
+            // ソート
+            bool asc = sortDirection == "asc";
+            query = sortColumn switch {
+                "Name" => asc ? query.OrderBy(t => t.Name) : query.OrderByDescending(t => t.Name),
+                "Date" => asc ? query.OrderBy(t => t.Date) : query.OrderByDescending(t => t.Date),
+                "Price" => asc ? query.OrderBy(t => t.Price) : query.OrderByDescending(t => t.Price),
+                _ => query.OrderBy(t => t.ID)
+            };
+
+            var pagedTours = query.ToPagedList(page, pageSize);
+
+            var model = new TourListViewModel {
+                SearchName = searchName,
+                SearchDate = searchDate,
+                SortColumn = sortColumn,
+                SortDirection = sortDirection,
+                Page = page,
+                PageSize = pageSize,
+                Tours = pagedTours
+            };
+
+            return View(model);
+        }
+
+        public IActionResult TourDetails(string id) {
+            var tour = _db.Tours.FirstOrDefault(e => e.ID == id);
+            if (tour == null)
+                return NotFound();
+
+            return View(tour);
+        }
+
+        [HttpPost]
+        public IActionResult AddToCart(int tourId, int quantity) {
+            if (quantity < 1) {
+                ModelState.AddModelError("", "購入数は1以上の整数を入力してください。");
+                return RedirectToAction("TourDetails", new {
+                    id = tourId
+                }); // エラー時は詳細画面へ戻す等
+            }
+
+            // 通常のカート処理...
+            return View();
         }
     }
 }

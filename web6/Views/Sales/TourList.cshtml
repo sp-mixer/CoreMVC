@@ -1,45 +1,77 @@
 ﻿@using X.PagedList.Mvc.Core;
 @using X.PagedList;
-@model IPagedList<web6.Models.TourViewModel>
+@model web6.Models.TourListViewModel
 
 <h2>ツアー一覧</h2>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ツアー名</th>
-            <th>日付</th>
-            <th>価格</th>
-            <th>日数</th>
-            <th>在庫</th>
-        </tr>
+<form method="get" asp-action="TourList" class="row g-3 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="searchName" value="@Model.SearchName" class="form-control" placeholder="ツアー名で検索" />
+    </div>
+    <div class="col-md-4">
+        <input type="date" name="searchDate" value="@Model.SearchDate" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">検索</button>
+    </div>
+</form>
+
+<!-- ページネーション -->
+@Html.PagedListPager(Model.Tours, page => Url.Action("TourList", new {
+    page,
+    searchName = Model.SearchName,
+    searchDate = Model.SearchDate,
+    sortColumn = Model.SortColumn,
+    sortDirection = Model.SortDirection
+}), new PagedListRenderOptions {
+    UlElementClasses = new[] { "pagination", "justify-content-left" },
+    LiElementClasses = new[] { "page-item" },
+    PageClasses = new[] { "page-link" },
+	LinkToPreviousPageFormat = "Previous",
+	LinkToNextPageFormat = "Next",
+})
+
+<table class="table table-hover">
+    <thead class="table-light">
+    <tr>
+        <th class="text-nowrap">
+            @Html.DisplayNameFor(m => m.Tours[0].ID)
+        </th>
+        <th class="text-nowrap">
+            @Html.DisplayNameFor(m => m.Tours[0].Name)
+                <a href="@Url.Action("TourList", new { searchName = Model.SearchName, searchDate = Model.SearchDate, sortColumn = "Name", sortDirection = "asc" })" class="btn btn-outline-secondary btn-sm px-1">▲</a>
+                <a href="@Url.Action("TourList", new { searchName = Model.SearchName, searchDate = Model.SearchDate, sortColumn = "Name", sortDirection = "desc" })" class="btn btn-outline-secondary btn-sm px-1">▼</a>
+        </th>
+        <th class="text-nowrap">
+            @Html.DisplayNameFor(m => m.Tours[0].Date)
+                <a href="@Url.Action("TourList", new { searchName = Model.SearchName, searchDate = Model.SearchDate, sortColumn = "Date", sortDirection = "asc" })" class="btn btn-outline-secondary btn-sm px-1">▲</a>
+                <a href="@Url.Action("TourList", new { searchName = Model.SearchName, searchDate = Model.SearchDate, sortColumn = "Date", sortDirection = "desc" })" class="btn btn-outline-secondary btn-sm px-1">▼</a>
+        </th>
+        <th class="text-nowrap">
+            @Html.DisplayNameFor(m => m.Tours[0].Price)
+                <a href="@Url.Action("TourList", new { searchName = Model.SearchName, searchDate = Model.SearchDate, sortColumn = "Price", sortDirection = "asc" })" class="btn btn-outline-secondary btn-sm px-1">▲</a>
+                <a href="@Url.Action("TourList", new { searchName = Model.SearchName, searchDate = Model.SearchDate, sortColumn = "Price", sortDirection = "desc" })" class="btn btn-outline-secondary btn-sm px-1">▼</a>
+        </th>
+        <th>@Html.DisplayNameFor(m => m.Tours[0].Days)</th>
+        <th>@Html.DisplayNameFor(m => m.Tours[0].Stock)</th>
+        <th>詳細</th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var tour in Model)
+        @foreach (var tour in Model.Tours)
         {
             <tr>
+                <td>@tour.ID</td>
                 <td>@tour.Name</td>
                 <td>@tour.Date.ToShortDateString()</td>
                 <td>@tour.Price</td>
                 <td>@tour.Days</td>
                 <td>@tour.Stock</td>
+                <td>
+                    <a href="@Url.Action("TourDetails", "Sales", new { id = tour.ID })" class="btn btn-sm btn-outline-primary">詳細</a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
-<!-- ページネーション -->
-<nav aria-label="ページナビゲーション">
-    @Html.PagedListPager(Model, page => Url.Action("TourList", new { page }),
-        new PagedListRenderOptions
-        {
-            Display = PagedListDisplayMode.IfNeeded,
-            MaximumPageNumbersToDisplay = 7,
-            UlElementClasses = new[] { "pagination", "justify-content-left" },
-            LiElementClasses = new[] { "page-item" },
-            PageClasses = new[] { "page-link" },
-
-            LinkToPreviousPageFormat = "Previous",
-            LinkToNextPageFormat = "Next",
-        })
-</nav>

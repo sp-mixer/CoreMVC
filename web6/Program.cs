@@ -13,6 +13,9 @@ var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 // EF Core 用の DbContext として登録
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(conn));
 
+// セッションとMVCサービスの登録
+builder.Services.AddSession();
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -22,6 +25,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.UseRouting();
 
