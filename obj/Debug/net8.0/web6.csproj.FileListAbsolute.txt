@@ -142,3 +142,15 @@
 /Users/mixer/NETPROJ/CoreMVC/web6/obj/Debug/net8.0/web6.pdb
 /Users/mixer/NETPROJ/CoreMVC/web6/obj/Debug/net8.0/web6.genruntimeconfig.cache
 /Users/mixer/NETPROJ/CoreMVC/web6/obj/Debug/net8.0/ref/web6.dll
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.csproj.AssemblyReference.cache
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.AssemblyInfoInputs.cache
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.AssemblyInfo.cs
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.csproj.CoreCompileInputs.cache
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.RazorAssemblyInfo.cache
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.RazorAssemblyInfo.cs
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.sourcelink.json
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.dll
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\refint\web6.dll
+C:\Users\mixer\Documents\mysynth\webapp\web6\obj\Debug\net8.0\web6.pdb

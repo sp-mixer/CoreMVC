@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/mixer/NETPROJ/CoreMVC/web6/web6.csproj": {}
+    "C:\\Users\\mixer\\Documents\\mysynth\\webapp\\web6\\web6.csproj": {}
   },
   "projects": {
-    "/Users/mixer/NETPROJ/CoreMVC/web6/web6.csproj": {
+    "C:\\Users\\mixer\\Documents\\mysynth\\webapp\\web6\\web6.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/mixer/NETPROJ/CoreMVC/web6/web6.csproj",
+        "projectUniqueName": "C:\\Users\\mixer\\Documents\\mysynth\\webapp\\web6\\web6.csproj",
         "projectName": "web6",
-        "projectPath": "/Users/mixer/NETPROJ/CoreMVC/web6/web6.csproj",
-        "packagesPath": "/Users/mixer/.nuget/packages/",
-        "outputPath": "/Users/mixer/NETPROJ/CoreMVC/web6/obj/",
+        "projectPath": "C:\\Users\\mixer\\Documents\\mysynth\\webapp\\web6\\web6.csproj",
+        "packagesPath": "C:\\Users\\mixer\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mixer\\Documents\\mysynth\\webapp\\web6\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/mixer/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\mixer\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -37,16 +44,13 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "Microsoft.AspNet.Mvc": {
-              "target": "Package",
-              "version": "[5.3.0, )"
-            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -58,6 +62,11 @@
               "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.0, )"
             }
@@ -81,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.411/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
