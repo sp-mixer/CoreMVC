@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<p>
+    <a asp-controller="Sales" asp-action="Index" class="btn btn-primary">
+        商品販売ページへ
+    </a>
+</p>
+
+@Html.ActionLink("権限編集", "Index", "EmployeeAuth")

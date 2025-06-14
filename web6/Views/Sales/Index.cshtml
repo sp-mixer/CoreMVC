@@ -1,0 +1,148 @@
+﻿@* Views/Sales/Index.cshtml*@
+
+@model web6.Models.SalesIndexViewModel
+
+
+
+<ul class="nav nav-tabs" id="salesTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tours-tab" data-bs-toggle="tab" data-bs-target="#tours" type="button" role="tab" aria-controls="tours" aria-selected="true">Tours</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="hotels-tab" data-bs-toggle="tab" data-bs-target="#hotels" type="button" role="tab" aria-controls="hotels" aria-selected="false">Hotels</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="flights-tab" data-bs-toggle="tab" data-bs-target="#flights" type="button" role="tab" aria-controls="flights" aria-selected="false">Flights</button>
+    </li>
+</ul>
+<div class="tab-content mt-3" id="salesTabContent">
+    <div class="tab-pane fade show active" id="tours" role="tabpanel" aria-labelledby="tours-tab">
+		<form action="@Url.Action("SearchTours", "Sales")" method="get" id="searchForm" class="row g-2 mb-3">
+			<div class="col-md-3">
+				<input name="searchName" type="text" value="@Model.SearchName" class="form-control" placeholder="ツアー名で検索" />
+			</div>
+			<div class="col-md-3">
+				<input name="searchDateInput" type="date" value="@Model.SearchDateInput" class="form-control" />
+			</div>
+            <div class="col-md-3">
+                <div class="d-flex align-items-center">
+                    <input type="number" id="minPriceInput" name="minPrice" class="form-control me-2" placeholder="最小価格" value="@(Model.MinPrice?.ToString())" />
+                    <input type="number" id="maxPriceInput" name="maxPrice" class="form-control" placeholder="最大価格" value="@(Model.MaxPrice?.ToString())" />
+                </div>
+            </div>
+            @*<input type="hidden" name="pageSize" value="@Model.PageSize" />*@
+            <div class="col-md-2">
+             @* ページサイズ選択 (Bootstrap & Razor Foreach) *@
+             <div class="input-group">
+                <select name="pageSize" class="form-select">
+                    @foreach(var size in new[]{15,25,50}) {
+                        if(Model.PageSize==size) {
+                            <option selected value="@size">@size</option>
+                        } else {
+                        <option value="@size">@size</option>
+                        }
+                    }
+                 </select>
+                <span class="input-group-text">件/ページ</span>
+            </div>
+            </div>
+			<div class="col-auto">
+				<button type="submit" class="btn btn-primary">検索</button>
+			</div>
+			@* ページネーション *@
+            <ul class="pagination">
+				@{var prevUrl = Url.Action("SearchTours", "Sales", new { searchName = Model.SearchName, searchDateInput = Model.SearchDateInput, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sortColumn=Model.SortColumn, sortDirection=Model.SortDirection, page = Model.PageNumber - 1, pageSize = Model.PageSize });
+				}
+				<li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+					<a class="page-link" href="@prevUrl">Previous</a>
+				</li>
+				@for (int i = 1; i <= Model.TotalPages; i++) {
+					var pageUrl = Url.Action("SearchTours", "Sales", new { searchName = Model.SearchName, searchDateInput = Model.SearchDateInput, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice, sortColumn=Model.SortColumn, sortDirection=Model.SortDirection, page = i, pageSize = Model.PageSize });
+					<li class="page-item @(Model.PageNumber == i ? "active" : "")">
+						<a class="page-link" href="@pageUrl">@i</a>
+					</li>
+				}
+				@{ 
+					var nextUrl = Url.Action("SearchTours", "Sales", new { searchName = Model.SearchName, searchDateInput = Model.SearchDateInput, minPrice = Model.MinPrice, maxPrice = Model.MaxPrice,sortColumn=Model.SortColumn, sortDirection=Model.SortDirection, page = Model.PageNumber + 1, pageSize = Model.PageSize });
+				}
+				<li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+					<a class="page-link" href="@nextUrl">Next</a>
+				</li>
+			</ul>
+		</form>
+        <table id="toursTable" class="table table-striped">
+			<thead>
+				<tr>
+					<th>@Html.DisplayNameFor(m => m.Tours[0].ID)</th>
+					<th>
+						@* Name ソート *@
+						<a href="@Url.Action("SearchTours", new { searchName=Model.SearchName, searchDateInput=Model.SearchDateInput, minPrice=Model.MinPrice, maxPrice=Model.MaxPrice, sortColumn="Name", sortDirection=(Model.SortColumn=="Name"&&Model.SortDirection=="asc"?"desc":"asc"), pageSize=Model.PageSize })">
+							@Html.DisplayNameFor(m => m.Tours[0].Name)
+							@if(Model.SortColumn == "Name") { @(Model.SortDirection=="asc"?" ▲":" ▼") }
+						</a>
+					</th>
+					<th>@Html.DisplayNameFor(m => m.Tours[0].AreaName)</th>
+					<th>@Html.DisplayNameFor(m => m.Tours[0].FlightName)</th>
+					<th>@Html.DisplayNameFor(m => m.Tours[0].HotelName)</th>
+					<th>
+						@* Date ソート *@
+						<a href="@Url.Action("SearchTours", new { /* 同様に Date */ sortColumn="Date", sortDirection=(Model.SortColumn=="Date"&&Model.SortDirection=="asc"?"desc":"asc"), /* 他パラメータ */ })">
+							@Html.DisplayNameFor(m => m.Tours[0].Date)
+							@if(Model.SortColumn == "Date") { @(Model.SortDirection=="asc"?" ▲":" ▼") }
+						</a>
+					</th>
+					<th>@Html.DisplayNameFor(m => m.Tours[0].Days)</th>
+					<th>
+						@* Price ソート *@
+						<a href="@Url.Action("SearchTours", new { /* 同様に Price */ sortColumn="Price", sortDirection=(Model.SortColumn=="Price"&&Model.SortDirection=="asc"?"desc":"asc"), /* 他パラメータ */ })">
+							@Html.DisplayNameFor(m => m.Tours[0].Price)
+							@if(Model.SortColumn == "Price") { @(Model.SortDirection=="asc"?" ▲":" ▼") }
+						</a>
+					</th>
+					<th>@Html.DisplayNameFor(m => m.Tours[0].Stock)</th>
+				</tr>
+			</thead>
+            <tbody>
+                @foreach(var t in Model.Tours)
+                {
+                    <tr>
+                        <td>@t.ID</td><td>@t.Name</td><td>@t.AreaName</td><td>@t.FlightName</td><td>@t.HotelName</td>
+                        <td>@t.Date.ToString("yyyy-MM-dd")</td><td>@t.Days</td><td>@t.Price</td><td>@t.Stock</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <div class="tab-pane fade" id="hotels" role="tabpanel" aria-labelledby="hotels-tab">
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>City</th><th>Date</th><th>Price</th><th>Stock</th></tr>
+            </thead>
+            <tbody>
+                @foreach(var h in Model.Hotels)
+                {
+                    <tr>
+                        <td>@h.ID</td><td>@h.Name</td><td>@h.CityName</td><td>@h.Date.ToString("yyyy-MM-dd")</td><td>@h.Price</td><td>@h.Stock</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="flights" role="tabpanel" aria-labelledby="flights-tab">
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Name</th><th>Date</th><th>Departure</th><th>Arrival</th><th>From</th><th>To</th><th>Price</th><th>Stock</th></tr>
+            </thead>
+            <tbody>
+                @foreach(var f in Model.Flights)
+                {
+                    <tr>
+                        <td>@f.ID</td><td>@f.Name</td><td>@f.Date.ToString("yyyy-MM-dd")</td><td>@f.DepartureTime</td><td>@f.ArrivalTime</td>
+                        <td>@f.DepartureAirportName</td><td>@f.ArrivalAirportName</td><td>@f.Price</td><td>@f.Stock</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
