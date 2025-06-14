@@ -1,0 +1,48 @@
+﻿@model List<web6.Models.EmployeeAuthViewModel>
+@using (Html.BeginForm("Update", "EmployeeAuth", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.TextBox("name", null, new { @class = "form-control", placeholder = "名前で検索" })
+        <button type="submit" class="btn btn-primary mt-2">検索</button>
+    </div>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>名前</th>
+                <th>Auth1</th>
+                <th>Auth2</th>
+                <th>Auth3</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => m[i].Id)
+                    @Html.DisplayFor(m => m[i].Name)
+                    @Html.DisplayFor(m => m[i].Id)
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        @Html.CheckBoxFor(m => m[i].Auth1, new { @class = "form-check-input" })
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        @Html.CheckBoxFor(m => m[i].Auth2, new { @class = "form-check-input" })
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        @Html.CheckBoxFor(m => m[i].Auth3, new { @class = "form-check-input" })
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">更新</button>
+}
