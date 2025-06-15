@@ -1,6 +1,6 @@
 ﻿namespace web6.Models {
     public class Order {
-        public int OrderNo {
+        public string OrderNo {
             get; set;
         }
         public int num {
@@ -25,6 +25,6 @@
         public int Quantity {
             get; set;
         }
-        public int Total => UnitPrice * Quantity;
+        public int Total { get; set; }
     }
 }

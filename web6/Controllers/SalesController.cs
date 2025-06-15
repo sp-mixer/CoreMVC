@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using web6.Data;
-using web6.Models;
-using X.PagedList.Mvc;
-using X.PagedList;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using web6.Data;
+using web6.Helpers;
+using web6.Models;
+using X.PagedList;
 using X.PagedList.Extensions;
+using X.PagedList.Mvc;
 
 namespace web6.Controllers {
     public class SalesController : Controller {
@@ -108,16 +109,169 @@ namespace web6.Controllers {
         }
 
         [HttpPost]
-        public IActionResult AddToCart(int tourId, int quantity) {
+        public IActionResult AddToCart(string tourId, int quantity) {
             if (quantity < 1) {
                 ModelState.AddModelError("", "購入数は1以上の整数を入力してください。");
                 return RedirectToAction("TourDetails", new {
                     id = tourId
-                }); // エラー時は詳細画面へ戻す等
+                });
+            }
+            var tour = _db.Tours.FirstOrDefault(t => t.ID == tourId);
+            if (tour == null)
+                return NotFound();
+
+            // セッションからカートを取得
+            var cart = CartHelper.GetCart(HttpContext.Session);
+
+            // 既に同じ商品がある場合は数量を加算
+            var existing = cart.FirstOrDefault(c => c.Id == tourId);
+            if (existing != null) {
+                existing.Quantity += quantity;
+            } else {
+                cart.Add(new CartItem {
+                    Id = tour.ID,
+                    Name = tour.Name,
+                    Date = tour.Date,
+                    Price = tour.Price,
+                    Quantity = quantity,
+                });
             }
 
-            // 通常のカート処理...
-            return View();
+            // セッションに保存
+            CartHelper.SaveCart(HttpContext.Session, cart);
+
+            // カート画面に遷移
+            return RedirectToAction("ViewCart");
+
+        }
+
+        public IActionResult ViewCart() {
+            var cart = CartHelper.GetCart(HttpContext.Session);
+            return View(cart); // ViewCart.cshtml
+        }
+
+        [HttpGet]
+        public IActionResult SelectCustomer(string? searchName) {
+            List<Customer> result = new List<Customer>();
+
+            if (!string.IsNullOrEmpty(searchName)) {
+                result = _db.Customers
+                            .Where(c => c.Name.Contains(searchName))
+                            .ToList();
+            }
+
+            var cart = CartHelper.GetCart(HttpContext.Session);
+
+            var filteredCart = cart.Where(c => c.Quantity > 0).ToList();
+            CartHelper.SaveCart(HttpContext.Session, filteredCart);
+
+            var model = new SelectCustomerViewModel {
+                SearchName = searchName,
+                Customers = result,
+                CartItems = filteredCart
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult RecalculateCart(List<CartItem> updatedCart) {
+            var newCart = updatedCart
+                .Where(item => item.Quantity > 0) // 数量0は除外
+                .ToList();
+
+            CartHelper.SaveCart(HttpContext.Session, newCart);
+            return RedirectToAction("ViewCart");
+        }
+
+        [HttpPost]
+        public IActionResult ClearCart() {
+            CartHelper.SaveCart(HttpContext.Session, new List<CartItem>());
+            return RedirectToAction("ViewCart");
+
+        }
+
+        [HttpPost]
+        public IActionResult ConfirmOrder(string customerId) {
+            var customer = _db.Customers.FirstOrDefault(c => c.ID == customerId);
+            if (customer == null)
+                return NotFound();
+
+            var cart = CartHelper.GetCart(HttpContext.Session);
+
+            var model = new ConfirmOrderViewModel {
+                Customer = customer,
+                CartItems = cart
+            };
+
+            return View(model); // ConfirmOrder.cshtml
+        }
+
+        [HttpPost]
+        public IActionResult CompletePurchase(string customerId) {
+            var customer = _db.Customers.FirstOrDefault(c => c.ID == customerId);
+            if (customer == null)
+                return NotFound();
+
+            var cart = CartHelper.GetCart(HttpContext.Session);
+            var failedItems = new List<CartItem>();
+            var now = DateTime.Now;
+
+            using (var transaction = _db.Database.BeginTransaction()) {
+                try {
+                    // 在庫チェック
+                    foreach (var item in cart) {
+                        var tour = _db.Tours.FirstOrDefault(t => t.ID.ToString() == item.Id);
+                        if (tour == null || tour.Stock < item.Quantity) {
+                            failedItems.Add(item);
+                        }
+                    }
+
+                    if (failedItems.Any()) {
+                        transaction.Rollback();
+                        return View("PurchaseResult", new PurchaseResultViewModel {
+                            Success = false,
+                            FailedItems = failedItems
+                        });
+                    }
+
+                    // OrderNoをユニークに発行
+                    string orderNo = OrderHelper.GenerateUniqueOrderNo(_db);
+
+                    // カート情報を保存
+                    int num = 1;
+                    foreach (var item in cart) {
+                        var tour = _db.Tours.First(t => t.ID.ToString() == item.Id);
+                        tour.Stock -= item.Quantity;
+
+                        _db.Orders.Add(new Order {
+                            OrderNo = orderNo,
+                            num = num++,
+                            Date = now,
+                            CustomerId = customerId,
+                            ItemId = item.Id,
+                            Category = item.Id.StartsWith("TUR") ? "01" : "99",
+                            UnitPrice = item.Price,
+                            Quantity = item.Quantity,
+                            Total = item.Price * item.Quantity
+                        });
+                    }
+
+                    _db.SaveChanges();
+                    transaction.Commit();
+
+                    CartHelper.SaveCart(HttpContext.Session, new List<CartItem>());
+
+                    return View("PurchaseResult", new PurchaseResultViewModel {
+                        Success = true,
+                        Customer = customer
+                    });
+                } catch (Exception) {
+                    transaction.Rollback();
+                    ModelState.AddModelError("", "注文処理中にエラーが発生しました。");
+                    return RedirectToAction("ViewCart");
+                }
+            }
         }
     }
 }

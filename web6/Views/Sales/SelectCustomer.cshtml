@@ -1,0 +1,91 @@
+﻿@model web6.Models.SelectCustomerViewModel
+
+@{
+    ViewBag.Title = "顧客選択";
+}
+<h2>顧客を選択</h2>
+
+<form method="get" action="@Url.Action("SelectCustomer", "Sales")" class="mb-3 row g-2">
+    <div class="col-md-4">
+        <input type="text" name="searchName" value="@Model.SearchName" class="form-control" placeholder="顧客名で検索" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">検索</button>
+    </div>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.SearchName))
+{
+    if (!Model.Customers.Any())
+    {
+        <div class="alert alert-warning">該当する顧客が見つかりません。</div>
+    }
+    else
+    {
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>顧客名</th>
+                    <th>住所</th>
+                    <th>電話</th>
+                    <th>選択</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr>
+                        <td class= "align-middle">@customer.Name</td>
+                        <td class= "align-middle">@($"{customer.Prefecture} {customer.Address}")</td>
+                        <td class="align-middle">@customer.Tel</td>
+                        <td>
+                            @using (Html.BeginForm("ConfirmOrder", "Sales", FormMethod.Post))
+                            {
+                                @Html.Hidden("customerId", customer.ID)
+                                <button type="submit" class="btn btn-sm btn-success">選択</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+<h4>カート内容</h4>
+@if (!Model.CartItems.Any())
+{
+    <p>カートは空です。</p>
+}
+else
+{
+    <table class="table">
+        <thead class="table-light">
+            <tr>
+                <th>商品名</th>
+                <th>日付</th>
+                <th>価格</th>
+                <th>数量</th>
+                <th>小計</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@($"{item.Price:N0} 円")</td>
+                    <td>@item.Quantity</td>
+                    <td>@($"{item.Price * item.Quantity:N0} 円")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="4" class="text-end">合計:</th>
+                <th>@($"{Model.CartItems.Sum(i => i.Price * i.Quantity):N0} 円")</th>
+            </tr>
+        </tfoot>
+    </table>
+}

@@ -1,6 +1,8 @@
-﻿namespace web6.Models {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace web6.Models {
     public class CartItem {
-        public int Id {
+        public string Id {
             get; set;
         }             // 商品ID（ツアー、ホテル、航空便）
         public string Name {
@@ -9,6 +11,7 @@
         public DateTime Date {
             get; set;
         }
+        [DisplayFormat(DataFormatString = "{0:N0}")]
         public int Price {
             get; set;
         }

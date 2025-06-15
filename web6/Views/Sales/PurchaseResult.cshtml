@@ -1,0 +1,36 @@
+﻿@model web6.Models.PurchaseResultViewModel
+
+@if (Model.Success)
+{
+    <h2 class="text-success">購入が完了しました</h2>
+    <p>ありがとうございました、@Model.Customer.Name 様。</p>
+    <p>確認メールを @Model.Customer.Mail に送信しました。</p>
+    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">ホームに戻る</a>
+}
+else
+{
+    <h2 class="text-danger">購入できませんでした</h2>
+    <p>以下の商品は在庫不足のため購入できませんでした。</p>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>商品名</th>
+                <th>日付</th>
+                <th>希望数</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.FailedItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="@Url.Action("ViewCart", "Sales")" class="btn btn-warning">カートに戻る</a>
+}

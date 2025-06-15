@@ -83,5 +83,45 @@ namespace web6.Models {
         }
     }
 
+    public class SelectCustomerViewModel {
+        public string? SearchName {
+            get; set;
+        }
+
+        public List<Customer> Customers {
+            get; set;
+        }
+
+        public List<CartItem> CartItems {
+            get; set;
+        }
+    }
+
+    public class ConfirmOrderViewModel {
+        public Customer Customer {
+            get; set;
+        }
+        public List<CartItem> CartItems {
+            get; set;
+        }
+
+        public int Total => CartItems.Sum(c => c.Price * c.Quantity);
+    }
+
+
+    public class PurchaseResultViewModel {
+        public bool Success {
+            get; set;
+        }
+
+        public Customer? Customer {
+            get; set;
+        }
+
+        public List<CartItem>? FailedItems {
+            get; set;
+        }
+    }
+
 
 }

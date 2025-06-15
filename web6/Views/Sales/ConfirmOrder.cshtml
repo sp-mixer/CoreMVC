@@ -1,0 +1,50 @@
+﻿@model web6.Models.ConfirmOrderViewModel
+
+@{
+    ViewBag.Title = "購入確認";
+}
+
+<h2>購入確認</h2>
+
+<h4>顧客情報</h4>
+<p><strong>@Model.Customer.Name</strong></p>
+<p>@Model.Customer.Mail</p>
+<p>@Model.Customer.ZipCode @Model.Customer.Prefecture @Model.Customer.Address</p>
+<p>@Model.Customer.Tel</p>
+
+<h4>購入商品</h4>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>商品名</th>
+            <th>日付</th>
+            <th>価格</th>
+            <th>数量</th>
+            <th>小計</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Date.ToShortDateString()</td>
+                <td>@($"{item.Price:N0} 円")</td>
+                <td>@item.Quantity</td>
+                <td>@($"{item.Price * item.Quantity:N0} 円")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="4" class="text-end">合計:</th>
+            <th>@($"{Model.Total:N0} 円")</th>
+        </tr>
+    </tfoot>
+</table>
+
+@using (Html.BeginForm("CompletePurchase", "Sales", FormMethod.Post))
+{
+    @Html.Hidden("customerId", Model.Customer.ID)
+    <button type="submit" class="btn btn-success">購入する</button>
+}

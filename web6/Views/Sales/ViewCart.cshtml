@@ -1,0 +1,79 @@
+﻿@model List<web6.Models.CartItem>
+
+@{
+    ViewBag.Title = "カート内容";
+}
+
+<h2 class="mb-4">カートの中身</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">カートは空です。</div>
+}else{
+	@using (Html.BeginForm("RecalculateCart", "Sales", FormMethod.Post)) {
+		<table class="table table-bordered">
+			<thead class="table-light">
+				<tr>
+					<th>商品名</th>
+					<th>日付</th>
+					<th>価格</th>
+					<th>数量</th>
+					<th>小計</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for (int i = 0; i < Model.Count; i++)
+				{
+					<tr>
+						<td class="align-middle">
+							@Html.DisplayFor(m => m[i].Name)
+							@Html.Hidden($"[{i}].Id", Model[i].Id)
+							@Html.Hidden($"[{i}].Name", Model[i].Name)
+							@Html.Hidden($"[{i}].Date", Model[i].Date)
+							@Html.Hidden($"[{i}].Price", Model[i].Price)
+						</td>
+						<td class="align-middle">
+							@Model[i].Date.ToShortDateString()</td>
+						<td class= "align-middle">@($"{Model[i].Price:N0} 円")</td>
+						<td class="align-middle">
+							<input type="number" name="[@i].Quantity" value="@Model[i].Quantity"
+									class="form-control-sm" min="0" />
+						</td>
+
+						<td class="align-middle">
+						@($"{Model[i].Price * Model[i].Quantity:N0} 円")</td>
+					</tr>
+				}
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="4" class="text-end">合計:</th>
+					<th>@($"{Model.Sum(i => i.Price * i.Quantity):N0} 円")</th>
+				</tr>
+			</tfoot>
+		</table>
+
+		<div class="d-flex justify-content-between">
+			<div>
+				<button type="submit" class="btn btn-outline-secondary">再計算</button>
+			</div>
+		</div>
+	}
+	
+	<div class="d-flex justify-content-between">
+		<div>
+			@using (Html.BeginForm("ClearCart", "Sales", FormMethod.Post)){
+				<button type="submit" class="btn btn-danger">カートを空にする</button>
+			}
+		</div>
+		<div>
+			@using (Html.BeginForm("SelectCustomer", "Sales", FormMethod.Get))
+			{
+				<button type="submit" class="btn btn-primary ms-2">次へ進む</button>
+			}
+		</div>
+	</div>
+}
+
+
+<a href="@Url.Action("Index", "Home")" class="btn btn-secondary">ホームに戻る</a>
