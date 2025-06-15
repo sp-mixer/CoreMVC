@@ -4,3 +4,38 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">MyApp</a>
+  <ul class="navbar-nav">
+
+    <li class="nav-item dropdown custom-dropdown">
+      <a href="#" class="nav-link dropdown-toggle" id="myDropdownToggle">メニュー</a>
+      <ul class="dropdown-menu" id="myDropdownMenu" style="display: none;">
+        <li><a class="dropdown-item" href="#">項目1</a></li>
+        <li><a class="dropdown-item" href="#">項目2</a></li>
+        <li><a class="dropdown-item" href="#">項目3</a></li>
+      </ul>
+    </li>
+
+  </ul>
+</nav>
+
+<script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
+
+<script>
+  $(function () {
+    $('#myDropdownToggle').on('click', function (e) {
+      e.preventDefault();
+      $('#myDropdownMenu').toggle(); // 表示/非表示の切り替え
+    });
+
+    // メニュー外クリック時に閉じる
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('.custom-dropdown').length) {
+        $('#myDropdownMenu').hide();
+      }
+    });
+  });
+</script>

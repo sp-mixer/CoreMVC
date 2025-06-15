@@ -10,7 +10,7 @@ public class EmployeeAuthController : Controller {
         var employees = _db.Employees
             .Where(e => name == null || e.Name.Contains(name))
             .Select(e => new EmployeeAuthViewModel {
-                Id = e.Id,
+                Id = e.ID,
                 Name = e.Name,
                 Auth1 = e.auth1,
                 Auth2 = e.auth2,

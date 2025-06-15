@@ -20,6 +20,7 @@ namespace web6.Controllers {
         }
 
         [HttpGet]
+        [Auth1]
         public async Task<IActionResult> SearchTours(string? searchName = null, string? searchDateInput = null, int? minPrice = null,
                                                         int? maxPrice = null, string? sortColumn = null, string? sortDirection = null,
                                                         int page = 1, int pageSize = 15) {

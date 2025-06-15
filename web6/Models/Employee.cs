@@ -17,7 +17,7 @@ namespace web6.Models {
     [Table("Employees")]
     public class Employee {
         [Key]
-        public string Id {
+        public string ID {
             get; set;
         }
         public string Name {
@@ -30,7 +30,6 @@ namespace web6.Models {
             get; set;
         }
 
-        [NotMapped]
         public string Password {
             get; set;
         }

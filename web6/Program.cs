@@ -14,6 +14,7 @@ var conn = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(conn));
 
 // セッションとMVCサービスの登録
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
 
